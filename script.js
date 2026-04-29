@@ -1677,4 +1677,10 @@ window.addEventListener('load',()=>{
 });
 window.addEventListener('resize',()=>{if(gameRunning)resizeCanvas()});
 
-
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("play-btn")) {
+    e.stopPropagation();
+    const game = e.target.closest(".game-card").dataset.game;
+    startGame(game);
+  }
+});
