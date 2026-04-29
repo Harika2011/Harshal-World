@@ -13,6 +13,7 @@
 
 <canvas id="particle-bg"></canvas>
 
+
 <!-- LOADING SCREEN -->
 <div class="screen" id="loading-screen">
   <div class="logo-container">
@@ -87,6 +88,7 @@
     <div class="nav-greeting">Welcome, <span id="navName">Player</span></div>
     <div class="nav-best">🏆 <span id="navBest">0</span></div>
     <button class="nav-btn" id="soundToggleNav" title="Toggle Sound">🔊</button>
+    <button class="nav-btn" id="themeToggleNav" title="Cycle Theme">🌌 <span>Default</span></button>
     <button class="nav-btn" id="settingsBtn">⚙️</button>
   </nav>
   <div class="hub-content">
@@ -107,11 +109,29 @@
         <div class="stat-chip"><strong id="statCombo">0</strong>Best Combo</div>
       </div>
     </div>
+    <div class="hub-controls">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="gameSearch" placeholder="Search games (Press '/' to focus)..." autocomplete="off">
+      </div>
+      
+      <div class="filter-pills" id="filterPills">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="arcade">🕹️ Arcade</button>
+        <button class="filter-btn" data-filter="action">⚔️ Action</button>
+        <button class="filter-btn" data-filter="multiplayer">👥 Multiplayer</button>
+      </div>
+    </div>
+
+    <div id="noResults" class="hidden">
+      <p>No games found matching your search!</p>
+    </div>
+
 
     <!-- Games Grid -->
     <div class="section-title">ARCADE GAMES</div>
     <div class="games-grid" id="gamesGrid">
-      <div class="game-card" data-game="space">
+      <div class="game-card" data-game="space" data-category="action">
         <div class="game-banner banner-space">🚀<span style="position:absolute;font-size:1rem;bottom:8px;left:10px;opacity:.5">⚡💥🔱</span></div>
         <div class="game-card-info">
           <div class="game-name">SPACE SHOOTER</div>
@@ -120,7 +140,7 @@
         </div>
         <button class="play-btn">▶ Play Now</button>
       </div>
-      <div class="game-card" data-game="flappy">
+      <div class="game-card" data-game="flappy" data-category="arcade">
         <div class="game-banner banner-flappy">🐦<span style="position:absolute;font-size:1rem;bottom:8px;left:10px;opacity:.5">🌿🌤️💨</span></div>
         <div class="game-card-info">
           <div class="game-name">FLAPPY BIRD</div>
@@ -129,7 +149,7 @@
         </div>
         <button class="play-btn">▶ Play Now</button>
       </div>
-      <div class="game-card" data-game="asteroid">
+      <div class="game-card" data-game="asteroid" data-category="action">
         <div class="game-banner banner-asteroid">☄️<span style="position:absolute;font-size:1rem;bottom:8px;left:10px;opacity:.5">🌌🪐✨</span></div>
         <div class="game-card-info">
           <div class="game-name">ASTEROID DODGE</div>
@@ -138,7 +158,7 @@
         </div>
         <button class="play-btn">▶ Play Now</button>
       </div>
-      <div class="game-card" data-game="whack">
+      <div class="game-card" data-game="whack" data-category="arcade">
         <div class="game-banner banner-whack">🐻<span style="position:absolute;font-size:1rem;bottom:8px;left:10px;opacity:.5">🔨💥⭐</span></div>
         <div class="game-card-info">
           <div class="game-name">WHACK A BEAR</div>
@@ -147,7 +167,7 @@
         </div>
         <button class="play-btn">▶ Play Now</button>
       </div>
-      <div class="game-card" data-game="dino">
+      <div class="game-card" data-game="dino" data-category="dino">
         <div class="game-banner banner-dino">🦕<span style="position:absolute;font-size:1rem;bottom:8px;left:10px;opacity:.5">🌵🦅💨</span></div>
         <div class="game-card-info">
           <div class="game-name">DINO JUMP</div>
@@ -156,12 +176,12 @@
         </div>
         <button class="play-btn">▶ Play Now</button>
       </div>
-      <div class="game-card locked" data-game="zombie">
-        <div class="coming-badge">COMING SOON</div>
-        <div class="game-banner banner-coming">🧟</div>
+      <div class="game-card" data-game="zombie" data-category="action">
+        <div class="game-banner banner-zombie">🧟<span style="position:absolute;font-size:1rem;bottom:8px;left:10px;opacity:.5">🩸🔫🧟</span></div>
         <div class="game-card-info">
           <div class="game-name">ZOMBIE SHOOTER</div>
-          <div class="game-desc">Survive the zombie apocalypse.</div>
+          <div class="game-desc">Survive the apocalypse. WASD to move, Click to shoot!</div>
+          <div class="game-best">BEST: <span class="best-score" data-game="zombie">0</span></div>
         </div>
       </div>
     </div>
@@ -180,6 +200,14 @@
           <div class="stat-box"><div class="stat-box-val" id="bestCombo">0x</div><div class="stat-box-label">Best Combo</div></div>
           <div class="stat-box"><div class="stat-box-val" id="totalXp">0</div><div class="stat-box-label">Total XP</div></div>
         </div>
+      </div>
+    </div>
+
+    <!-- Achievements row -->
+    <div class="hub-bottom" style="margin-top: 1.5rem; margin-bottom: 0;">
+      <div class="achievements-card" style="grid-column: 1 / -1; width: 100%;">
+        <div class="section-title" style="margin-bottom:.8rem">ACHIEVEMENTS</div>
+        <div class="achievements-grid" id="achievementsList"></div>
       </div>
     </div>
 
@@ -208,6 +236,7 @@
   </div>
   <div class="game-canvas-wrap" id="gameCanvasWrap">
     <canvas id="gameCanvas"></canvas>
+    <div class="sr-only" id="dinoMobileHint" aria-live="polite" hidden>For Dino Jump on mobile, tap upper area to jump. The lower area shows live game analysis.</div>
     <!-- Pause Overlay -->
     <div class="game-overlay hidden" id="pauseOverlay">
       <div class="overlay-title">PAUSED</div>
@@ -256,20 +285,40 @@
       </div>
     </div>
 
-    <!-- Flappy & Whack: no buttons needed (tap canvas) -->
+    <!-- Mobile Controls: Zombie Shooter -->
+    <div class="mobile-controls" id="mobileZombie">
+      <div class="dpad">
+        <div class="dpad-btn dpad-up" data-dir="up">▲</div>
+        <div class="dpad-btn dpad-left" data-dir="left">◀</div>
+        <div class="dpad-btn dpad-center">●</div>
+        <div class="dpad-btn dpad-right" data-dir="right">▶</div>
+        <div class="dpad-btn dpad-down" data-dir="down">▼</div>
+      </div>
+      <div style="position:absolute; right:20px; bottom:20px; color:rgba(255,255,255,0.5); font-size:0.8rem; text-align:right; pointer-events:none;">
+        TAP ANYWHERE<br>TO SHOOT
+      </div>
+    </div>
 
     <!-- Space Shooter Tutorial Overlay -->
     <div class="tutorial-overlay hidden" id="spaceTutorial">
       <div class="tutorial-title">🚀 SPACE SHOOTER</div>
-      <div style="font-size:.8rem;color:var(--text2);text-align:center;max-width:320px">Master these controls to survive the asteroid field</div>
+      <div style="font-size:.8rem;color:var(--text2);text-align:center;max-width:500px">Master these controls to survive the asteroid field</div>
       <div class="tutorial-grid">
         <div class="tutorial-key">
           <div class="tutorial-key-icon">← →</div>
-          <div class="tutorial-key-label"><strong>Move</strong>Arrow keys to move ship</div>
+          <div class="tutorial-key-label"><strong>Move</strong>Arrow keys to move</div>
+        </div>
+        <div class="tutorial-key">
+          <div class="tutorial-key-icon">A D</div>
+          <div class="tutorial-key-label"><strong>Move</strong>A and D keys to move</div>
         </div>
         <div class="tutorial-key">
           <div class="tutorial-key-icon">⎵</div>
           <div class="tutorial-key-label"><strong>Fire</strong>Space bar to shoot</div>
+        </div>
+        <div class="tutorial-key">
+          <div class="tutorial-key-icon">🖱</div>
+          <div class="tutorial-key-label"><strong>Fire</strong>Left mouse click to shoot</div>
         </div>
         <div class="tutorial-key">
           <div class="tutorial-key-icon">B</div>
@@ -281,6 +330,48 @@
         </div>
       </div>
       <button class="tutorial-continue" id="spaceTutorialBtn">CONTINUE →</button>
+    </div>
+
+    <!-- Asteroid Dodge Tutorial Overlay -->
+    <div class="tutorial-overlay hidden" id="asteroidTutorial">
+      <div class="tutorial-title">☄️ ASTEROID DODGE</div>
+      <div style="font-size:.8rem;color:var(--text2);text-align:center;max-width:500px">Dodge the incoming asteroids to survive!</div>
+      <div class="tutorial-grid">
+        <div class="tutorial-key">
+          <div class="tutorial-key-icon">← →</div>
+          <div class="tutorial-key-label"><strong>Move</strong>Arrow keys to move</div>
+        </div>
+        <div class="tutorial-key">
+          <div class="tutorial-key-icon">W A S D</div>
+          <div class="tutorial-key-label"><strong>Move</strong>WASD keys to move</div>
+        </div>
+        <div class="tutorial-key">
+          <div class="tutorial-key-icon">⏸</div>
+          <div class="tutorial-key-label"><strong>Pause</strong>ESC or pause button</div>
+        </div>
+      </div>
+      <button class="tutorial-continue" id="asteroidTutorialBtn">CONTINUE →</button>
+    </div>
+
+    <!-- Zombie Shooter Tutorial Overlay -->
+    <div class="tutorial-overlay hidden" id="zombieTutorial">
+      <div class="tutorial-title">🧟 ZOMBIE SHOOTER</div>
+      <div style="font-size:.8rem;color:var(--text2);text-align:center;max-width:500px">Survive the zombie horde as long as possible!</div>
+      <div class="tutorial-grid">
+        <div class="tutorial-key">
+          <div class="tutorial-key-icon">W A S D</div>
+          <div class="tutorial-key-label"><strong>Move</strong>WASD or Arrows to move</div>
+        </div>
+        <div class="tutorial-key">
+          <div class="tutorial-key-icon">🖱</div>
+          <div class="tutorial-key-label"><strong>Shoot</strong>Click/Tap to aim and shoot</div>
+        </div>
+        <div class="tutorial-key">
+          <div class="tutorial-key-icon">⏸</div>
+          <div class="tutorial-key-label"><strong>Pause</strong>ESC or pause button</div>
+        </div>
+      </div>
+      <button class="tutorial-continue" id="zombieTutorialBtn">CONTINUE →</button>
     </div>
   </div>
 </div>
@@ -318,6 +409,9 @@
   </div>
 </div>
 
+<!-- ACHIEVEMENT TOAST CONTAINER -->
+<div id="achievement-toast-container" style="position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; pointer-events: none;"></div>
+
 <script src="script.js"></script>
 </body>
-</html> 
+</html>
