@@ -1171,7 +1171,7 @@ GAMES.flappy={
     this.pipes=[];this.score=0;this.started=false;this.dead=false;this.frameCount=0;this.bg=0;this.pipeTimer=0;this.lives=3;this.invincible=0;this.powerups=[];this.shield=false;this.shieldTimer=0;this.nextPUScore=5;this.lastPUScore=0;
     setScore(0);setLives(3);resetCombo();
     document.getElementById('flappyTutorial').classList.remove('hidden');
-    document.getElementById('flappyTutorialBtn').onclick=()=>{document.getElementById('flappyTutorial').classList.add('hidden');gameRunning=true;this.started=true;STATE.gamesPlayed++;saveState();checkAchievements();GAMES.flappy.update=GAMES.flappy.updateGame;this._updateReal();requestAnimationFrame(()=>this.loop())};
+    document.getElementById('flappyTutorialBtn').onclick=()=>{document.getElementById('flappyTutorial').classList.add('hidden');this.started=true;gameLoop=requestAnimationFrame(()=>this.loop())};
     document.addEventListener('click',this._flap=()=>this.flap(),{once:false});
   },
   spawnPowerUp(type){
@@ -1207,9 +1207,14 @@ GAMES.flappy={
     this.addCombo();
   },
   addCombo(){addCombo()},
+  flap(){
+    if(!this.started||this.dead||!gameRunning)return;
+    this.bird.vy=-6;
+    SFX.flap();
+  },
   loop(){
     if(!gameRunning)return;
-    if(!gamePaused)this.update();
+    if(!gamePaused)this.updateGame();
     this.draw();
     gameLoop=requestAnimationFrame(()=>this.loop());
   },
